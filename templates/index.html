@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Music Recommender</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="glass-card">
+    <h1>Music Recommender</h1>
+    <select id="genreSelect">
+      <option value="">-- Choose a Genre --</option>
+      {% for genre in genres %}
+        <option value="{{ genre }}">{{ genre.title() }}</option>
+      {% endfor %}
+    </select>
+    <button onclick="getRecommendations()">Recommend</button>
+    <div id="recommendations"></div>
+  </div>
+
+  <script>
+    async function getRecommendations() {
+      const genre = document.getElementById("genreSelect").value;
+      const res = await fetch('/recommend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ genre })
+      });
+      const data = await res.json();
+      const container = document.getElementById("recommendations");
+      container.innerHTML = "<h3>Recommended Songs:</h3>";
+      data.forEach(song => {
+        container.innerHTML += `<p><strong>${song.track_name}</strong> by ${song.artists}</p>`;
+      });
+    }
+  </script>
+</body>
+</html>
+
+
